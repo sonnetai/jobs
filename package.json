@@ -4,7 +4,9 @@
   "description": "Typescript Template to use for future projects",
   "scripts": {
     "reformat": "prettier --write . && eslint --fix",
-    "lint": "prettier --check . && eslint"
+    "lint": "prettier --check . && eslint",
+    "build": "tsc",
+    "start:usage": "node ./build/usage-email.js"
   },
   "repository": {
     "type": "git",
@@ -27,5 +29,9 @@
     "eslint-plugin-unused-imports": "^3.1.0",
     "prettier": "^3.2.5",
     "typescript": "^5.4.3"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.41.1",
+    "dotenv": "^16.4.5"
   }
 }
