@@ -68,7 +68,7 @@ const handleRecordingInserted = async (payload: any) => {
     },
     body: JSON.stringify({
       email: (userProfile as unknown as RecordType).email,
-      transactionalId: "<TRANSACTIONAL_EMAIL_ID>",
+      transactionalId: `${process.env.TRANSACTIONAL_ID}`,
     }),
   });
 

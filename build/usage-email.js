@@ -36,16 +36,35 @@ const handleRecordingInserted = (payload) => __awaiter(void 0, void 0, void 0, f
         console.error(error);
         return;
     }
-    const recordingUsagePolicy = userProfile.organization.stripeProduct.policies["max_recordings_prg"];
+    const recordingUsagePolicy = userProfile.organization.stripeProduct
+        .policies["max_recordings_prg"];
     if (!recordingUsagePolicy) {
         return;
     }
-    const { data: usageData, error: getUsageError } = yield supabase.rpc(recordingUsagePolicy, { org_id: userProfile.organization.id });
+    const { data: usageData, error: getUsageError } = yield supabase.rpc(recordingUsagePolicy, {
+        org_id: userProfile.organization.id,
+    });
     if (getUsageError || !usageData) {
         console.error(getUsageError);
         return;
     }
-    console.log(usageData);
+    if (usageData.used < usageData.total) {
+        return;
+    }
+    const response = yield fetch("https://app.loops.so/api/v1/transactional", {
+        method: "POST",
+        headers: {
+            authorization: `Bearer ${process.env.LOOPS_API_KEY}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            email: userProfile.email,
+            transactionalId: `${process.env.TRANSACTIONAL_ID}`,
+        }),
+    });
+    if (!response.ok) {
+        console.error(`Failed to send email: Status code ${response.status} - ${response.statusText}`);
+    }
 });
 const supabase = (0, supabase_js_1.createClient)(process.env.SUPABASE_URL || "", process.env.SUPABASE_SERVICE_KEY || "");
 supabase
